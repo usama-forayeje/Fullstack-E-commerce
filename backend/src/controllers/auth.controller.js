@@ -4,12 +4,7 @@ import User from "../models/user.model.js";
 import redis from "../../db/redis.js";
 
 const storeRefreshToken = async (userId, refreshToken) => {
-  await redis.set(
-    `refreshToken:${userId}`,
-    refreshToken,
-    "EX",
-    7 * 24 * 60 * 60
-  );
+  await redis.set(`refreshToken:${userId}`, refreshToken, "EX", 7 * 24 * 60 * 60);
 };
 
 const setCookies = (res, accessToken, refreshToken) => {
@@ -92,14 +87,10 @@ export const logIn = async (req, res) => {
 export const logOut = async (req, res) => {
   try {
     const refreshToken = req.cookies?.refreshToken;
-    if (!refreshToken)
-      return res.status(401).json({ message: "User not logged in" });
+    if (!refreshToken) return res.status(401).json({ message: "User not logged in" });
 
     if (refreshToken) {
-      const decoded = jwt.verify(
-        refreshToken,
-        process.env.REFRESH_TOKEN_SECRET
-      );
+      const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
       await redis.del(`refreshToken:${decoded.id}`);
     }
 
@@ -127,13 +118,9 @@ export const refreshToken = async (req, res) => {
       return res.status(401).json({ message: "Invalid refresh token" });
     }
 
-    const accessToken = jwt.sign(
-      { id: decoded.id },
-      process.env.ACCESS_TOKEN_SECRET,
-      {
-        expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
-      }
-    );
+    const accessToken = jwt.sign({ id: decoded.id }, process.env.ACCESS_TOKEN_SECRET, {
+      expiresIn: process.env.ACCESS_TOKEN_EXPIRY,
+    });
 
     res.cookie("accessToken", accessToken, {
       httpOnly: true,
@@ -151,8 +138,5 @@ export const refreshToken = async (req, res) => {
 
 export const profile = (req, res) => {
   try {
-    
-  } catch (error) {
-    
-  }
+  } catch (error) {}
 };
