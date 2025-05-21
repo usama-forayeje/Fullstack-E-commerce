@@ -11,7 +11,10 @@ export const getAnalytics = async (req, res) => {
 
     const dailySalesData = await getDailySalesData(startDate, endDate);
 
-    res.status(200).json({ analyticsData, dailySalesData });
+    res.status(200).json({
+      summary: analyticsData,
+      last7Days: dailySalesData,
+    });
   } catch (error) {
     console.log("get analytics error", error);
     res.status(500).json({ message: "Internal server error" });
@@ -33,9 +36,7 @@ const getAnalyticsAggregations = async () => {
   ]);
 
   const { totalSales, totalRevenue } = salesData[0] || { totalSales: 0, totalRevenue: 0 };
-  return res
-    .status(200)
-    .json({ users: totalUsers, products: totalProducts, totalSales, totalRevenue });
+  return { users: totalUsers, products: totalProducts, totalSales, totalRevenue };
 };
 
 const getDailySalesData = async (startDate, endDate) => {
@@ -47,7 +48,7 @@ const getDailySalesData = async (startDate, endDate) => {
     },
     {
       $group: {
-        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } },
+        _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: "Asia/Dhaka" } },
         sales: { $sum: 1 },
         revenue: { $sum: "$totalAmount" },
       },
@@ -76,7 +77,11 @@ function getDatesInRange(startDate, endDate) {
   let currentDate = new Date(startDate);
 
   while (currentDate <= endDate) {
-    dates.push(currentDate.toISOString().split("T")[0]);
+    const day = String(currentDate.getDate()).padStart(2, "0");
+    const month = String(currentDate.getMonth() + 1).padStart(2, "0");
+    const year = currentDate.getFullYear();
+
+    dates.push(`${day}-${month}-${year}`);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 
