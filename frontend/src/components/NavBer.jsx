@@ -1,75 +1,88 @@
-import { LayoutDashboard, LogInIcon, LogOut, ShoppingCart, UserPlus } from "lucide-react";
+import { LayoutDashboard, LogInIcon, LogOut, Menu, ShoppingCart, UserPlus } from "lucide-react";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
+import { useUserStore } from "../store/useUserStore";
+import SubmitButton from "./form/SubmitButton";
 
 function NavBer() {
-  const user = false;
-  const admin = false;
+  const user = useUserStore((state) => state.user);
+  const { logOut } = useUserStore();
+  const admin = user?.role === "admin";
   return (
     <header className="fixed top-0 left-0 w-full bg-gray-900 bg-opacity-90 backdrop-blur-md shadow-lg z-40 transition-all duration-300 border-b border-emerald-800">
-      <div className="container  mx-auto px-4 py-3 ">
+      <div className="container mx-auto px-4 py-3">
         <div className="flex items-center justify-between">
-          <Link to="/" className="text-2xl font-bold text-emerald-400 items-center space-x-2 flex">
-            E-Commerce
+          {/* Logo */}
+          <Link to="/" className="flex items-center space-x-2">
+            <span className="text-2xl font-bold text-emerald-400">E-Commerce</span>
           </Link>
-          <nav className="flex flex-wrap items-center gap-4">
+
+          {/* Navigation Links - Desktop */}
+          <nav className="hidden md:flex items-center space-x-4">
             <Link
-              to={"/"}
-              className="text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out"
+              to="/"
+              className="text-gray-300 hover:text-emerald-400 transition duration-300 px-3 py-2"
             >
               Home
             </Link>
+
             {user && (
               <Link
                 to="/cart"
-                className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 ease-in-out"
+                className="relative group text-gray-300 hover:text-emerald-400 transition duration-300 px-3 py-2"
               >
-                <ShoppingCart
-                  size={20}
-                  className=" inline-block mr-1 group-hover:text-emerald-400 "
-                />
-                <span className="hidden sm:inline">Cart</span>
-                <span className="absolute -top-2 -left-2 bg-emerald-500 text-white rounded-full px-2 py-0.5 text-xs group-hover:bg-emerald-400 transition duration-300 ease-in-out">
-                  3
-                </span>
+                <div className="flex items-center">
+                  <ShoppingCart size={20} className="mr-1" />
+                  <span className="hidden sm:inline">Cart</span>
+                  <span className="absolute -top-2 -right-1 bg-emerald-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs">
+                    3
+                  </span>
+                </div>
               </Link>
             )}
+
             {admin && (
               <Link
                 to="/dashboard"
-                className="bg-emerald-700 hover:bg-emerald-600 py-2 px-4  text-white  rounded-md font-medium transition duration-300 ease-in-out flex items-center"
+                className="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-md font-medium transition duration-300 flex items-center"
               >
-                <LayoutDashboard
-                  size={18}
-                  className=" inline-block mr-1 group-hover:text-emerald-400 "
-                />
-                <span className="hidden sm:inline">Dashboard</span>
+                <LayoutDashboard size={18} className="mr-2" />
+                <span>Dashboard</span>
               </Link>
             )}
+
             {user ? (
-              <Button className="bg-gray-700 hover:bg-gray-600 text-white py-2 px-4 rounded-md items-center flex transition duration-300 ease-in-out">
-                <LogOut size={18} />
+              <button
+                onClick={logOut}
+                className="bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded-md flex items-center transition duration-300"
+              >
+                <LogOut size={18} className="mr-2" />
                 <span className="hidden sm:inline">Log Out</span>
-              </Button>
+              </button>
             ) : (
               <>
                 <Link
-                  to={"/sign-up"}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out"
+                  to="/sign-up"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md flex items-center transition duration-300"
                 >
-                  <UserPlus className="mr-2 " size={18} />
-                  <span className="hidden sm:inline ml-2">Sign Up</span>
+                  <UserPlus size={18} className="mr-2" />
+                  <span className="hidden sm:inline">Sign Up</span>
                 </Link>
                 <Link
-                  to={"/log-in"}
-                  className="bg-emerald-600 hover:bg-emerald-700 text-white py-2 px-4 rounded-md flex items-center transition duration-300 ease-in-out"
+                  to="/log-in"
+                  className="bg-emerald-600 hover:bg-emerald-700 text-white px-4 py-2 rounded-md flex items-center transition duration-300"
                 >
-                  <LogInIcon className="mr-2 " size={18} />
-                  <span className="hidden sm:inline ml-2">Log In</span>
+                  <LogInIcon size={18} className="mr-2" />
+                  <span className="hidden sm:inline">Log In</span>
                 </Link>
               </>
             )}
           </nav>
+
+          {/* Mobile Menu Button */}
+          <button className="md:hidden text-gray-300 hover:text-emerald-400 focus:outline-none">
+            <Menu size={24} />
+          </button>
         </div>
       </div>
     </header>

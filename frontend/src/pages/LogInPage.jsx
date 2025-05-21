@@ -6,7 +6,8 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { ArrowRight, Lock, LogIn, Mail } from "lucide-react";
 import InputWithIcon from "../components/form/InputWithIcon";
 import SubmitButton from "../components/form/SubmitButton";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
+import { useUserStore } from "../store/useUserStore";
 
 function LogInPage() {
   const {
@@ -18,9 +19,17 @@ function LogInPage() {
     resolver: zodResolver(logInSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log("Submitted data:", data);
-    reset();
+  const navigate = useNavigate();
+  const { logIn } = useUserStore();
+
+  const onSubmit = async (data) => {
+    try {
+      await logIn(data);
+      reset();
+      navigate("/");
+    } catch (error) {
+      console.log("log in error", error);
+    }
   };
 
   return (

@@ -71,10 +71,10 @@ export const logIn = async (req, res) => {
 
       setCookies(res, accessToken, refreshToken);
 
-      const { password: _, ...userWithoutPassword } = user._doc;
+      const { password, __v, ...safeUser } = user.toObject();
 
       res.status(200).json({
-        user: userWithoutPassword,
+        user: safeUser,
         message: "User logged in successfully",
       });
     }

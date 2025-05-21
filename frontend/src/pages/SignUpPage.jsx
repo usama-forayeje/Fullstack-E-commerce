@@ -2,13 +2,16 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 // eslint-disable-next-line no-unused-vars
 import { motion } from "framer-motion";
-import { Link } from "react-router";
+import { Link, useNavigate } from "react-router";
 import { UserPlus2, Mail, Lock, User, ArrowRight } from "lucide-react";
 import { signUpSchema } from "../validation/signup.schema";
 import InputWithIcon from "../components/form/InputWithIcon";
 import SubmitButton from "../components/form/SubmitButton";
+import { useUserStore } from "../store/useUserStore";
+import toast from "react-hot-toast";
 
 function SignUpPage() {
+  const navigate = useNavigate();
   const {
     register,
     handleSubmit,
@@ -18,9 +21,17 @@ function SignUpPage() {
     resolver: zodResolver(signUpSchema),
   });
 
-  const onSubmit = (data) => {
-    console.log("Submitted data:", data);
-    reset();
+  const { signUp } = useUserStore();
+
+  const onSubmit = async (data) => {
+    try {
+      await signUp(data);
+      reset();
+      navigate("/log-in");
+    } catch (error) {
+      console.log("sign up error", error);
+      toast.error("Sign up failed. Please try again.");
+    }
   };
 
   return (
