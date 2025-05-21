@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { useForm } from "react-hook-form";
 import { logInSchema } from "../validation/logIn.schema";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { ArrowRight, Lock, LogIn, Mail, UserPlus2 } from "lucide-react";
+import { ArrowRight, Lock, LogIn, Mail } from "lucide-react";
 import InputWithIcon from "../components/form/InputWithIcon";
 import SubmitButton from "../components/form/SubmitButton";
 import { Link } from "react-router";
