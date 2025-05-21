@@ -138,5 +138,9 @@ export const refreshToken = async (req, res) => {
 
 export const profile = (req, res) => {
   try {
-  } catch (error) {}
+    res.json(req.user);
+  } catch (error) {
+    console.error("Profile error:", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };

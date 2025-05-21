@@ -6,6 +6,7 @@ import productRoutes from "./src/routes/product.routes.js";
 import cartRoutes from "./src/routes/cart.routes.js";
 import couponRoutes from "./src/routes/coupon.routes.js";
 import paymentRoutes from "./src/routes/payment.routes.js";
+import analyticsRoutes from "./src/routes/analytics.routes.js";
 import { connectDB } from "./db/db.connect.js";
 
 dotenv.config();
@@ -20,6 +21,7 @@ app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/coupons", couponRoutes);
 app.use("/api/v1/payments", paymentRoutes);
+app.use("/api/v1/analytics", analyticsRoutes);
 
 app.listen(PORT, () => {
   console.log(`server is running on http://localhost:${PORT}`);

@@ -43,7 +43,7 @@ export const createCheckoutSession = async (req, res) => {
       mode: "payment",
       success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
-      discounts: coupon ? [{ coupon: await crateStripeCoupon(coupon.discountPercentage) }] : [],
+      discounts: coupon ? [{ coupon: await createStripeCoupon(coupon.discountPercentage) }] : [],
       metadata: {
         userId: req.user._id,
         couponCode: coupon ? coupon.code : null,
@@ -54,11 +54,14 @@ export const createCheckoutSession = async (req, res) => {
     });
 
     if (totalAmount >= 200) {
-      await crateNewCoupon({ id: session.id, totalAmount: totalAmount / 100 });
+      await createNewCoupon({ id: session.id, totalAmount: totalAmount / 100 });
     }
 
     res.status(200).json({ url: session.url });
-  } catch (error) {}
+  } catch (error) {
+    console.log("create checkout session error", error);
+    res.status(500).json({ message: "Internal server error" });
+  }
 };
 
 export const checkoutSuccess = async (req, res) => {
@@ -85,7 +88,7 @@ export const checkoutSuccess = async (req, res) => {
       .status(200)
       .json({
         success: true,
-        massage: "payment successful , order created, and coupon deactivated of used.",
+        message: "payment successful , order created, and coupon deactivated of used.",
         orderId: newOrder._id,
       });
   } catch (error) {
@@ -94,7 +97,7 @@ export const checkoutSuccess = async (req, res) => {
   }
 };
 
-async function crateNewCoupon(userId) {
+async function createNewCoupon(userId) {
   const newCoupon = new Coupon({
     code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
     discountPercentage: 10,
@@ -107,7 +110,7 @@ async function crateNewCoupon(userId) {
   return newCoupon;
 }
 
-async function crateStripeCoupon(discountPercentage) {
+async function createStripeCoupon(discountPercentage) {
   const coupon = await stripe.coupons.create({
     percent_off: discountPercentage,
     duration: "once",
