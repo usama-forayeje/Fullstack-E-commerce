@@ -31,16 +31,13 @@ export const validateCoupon = async (req, res) => {
       return res.status(400).json({ message: "Coupon code has expired" });
     }
 
-    res
-      .status(200)
-      .json({
-        message: "Coupon code is valid",
-        discountPercentage: coupon.discountPercentage,
-        code: coupon.code,
-      });
+    res.status(200).json({
+      message: "Coupon code is valid",
+      discountPercentage: coupon.discountPercentage,
+      code: coupon.code,
+    });
   } catch (error) {
     console.log("validate coupon error", error);
     res.status(500).json({ message: "Internal server error" });
   }
 };
-

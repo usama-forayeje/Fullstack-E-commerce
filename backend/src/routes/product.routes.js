@@ -1,5 +1,13 @@
 import express from "express";
-import { crateProduct, deleteProduct, getAllProducts, getFeaturedProducts, getProductsByCategory, getRecommendedProducts, toggleFeatured } from "../controllers/product.controller.js";
+import {
+  crateProduct,
+  deleteProduct,
+  getAllProducts,
+  getFeaturedProducts,
+  getProductsByCategory,
+  getRecommendedProducts,
+  toggleFeatured,
+} from "../controllers/product.controller.js";
 import { adminRoute, protectRoute } from "../middlewares/auth.middleware.js";
 
 const router = express.Router();

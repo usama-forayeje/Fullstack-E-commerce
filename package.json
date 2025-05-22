@@ -4,7 +4,9 @@
   "main": "index.js",
   "scripts": {
     "dev": "nodemon backend/server.js",
-    "start": "node backend/server.js"
+    "start": "node backend/server.js",
+    "prepare": "husky install",
+    "format": "prettier --write ."
   },
   "keywords": [],
   "author": "",

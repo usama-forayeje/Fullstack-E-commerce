@@ -84,13 +84,11 @@ export const checkoutSuccess = async (req, res) => {
       });
       await newOrder.save();
     }
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "payment successful , order created, and coupon deactivated of used.",
-        orderId: newOrder._id,
-      });
+    res.status(200).json({
+      success: true,
+      message: "payment successful , order created, and coupon deactivated of used.",
+      orderId: newOrder._id,
+    });
   } catch (error) {
     console.log("checkout success error", error);
     res.status(500).json({ message: "Internal server error" });
