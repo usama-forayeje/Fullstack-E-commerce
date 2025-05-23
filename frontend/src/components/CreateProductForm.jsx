@@ -50,7 +50,6 @@ function CreateProductForm() {
       formData.append("price", data.price);
       formData.append("category", data.category);
       formData.append("productImage", data.productImage);
-      console.log(data);
       await createProducts(formData);
       reset();
     } catch (error) {

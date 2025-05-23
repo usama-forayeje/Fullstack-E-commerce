@@ -7,6 +7,7 @@ import { useUserStore } from "./store/useUserStore.js";
 import { useEffect } from "react";
 import LoadingSpinner from "./components/LoadingSpinner.jsx";
 import AdminPage from "./pages/AdminPage.jsx";
+import CategoryPage from "./pages/CategoryPage.jsx";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -16,7 +17,6 @@ function App() {
   useEffect(() => {
     checkAuth();
   }, [checkAuth]);
-  console.log(user);
 
   if (checkingAuth) return <LoadingSpinner />;
 
@@ -40,6 +40,7 @@ function App() {
             path="/secret-dashboard"
             element={user?.role === "admin" ? <AdminPage /> : <Navigate to="/log-in" />}
           />
+          <Route path="/category/:category" element={<CategoryPage />} />
         </Routes>
       </div>
     </div>

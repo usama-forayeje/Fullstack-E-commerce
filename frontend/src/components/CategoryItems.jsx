@@ -3,7 +3,7 @@ import { Link } from "react-router";
 function CategoryItems({ category }) {
   return (
     <div className="relative overflow-hidden h-96 w-full rounded-lg group">
-      <Link to={`/category/${category?.image_url}`}>
+      <Link to={`/category/${category.category}`}>
         <div className="w-full h-full cursor-pointer relative">
           <img
             src={category?.image_url}

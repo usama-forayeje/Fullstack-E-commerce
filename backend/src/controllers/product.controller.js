@@ -139,6 +139,21 @@ export const deleteProduct = async (req, res) => {
       }
     }
 
+    // Delete from Redis if featured
+    if (product.isFeatured) {
+      try {
+        const cachedData = await redis.get("featured_products");
+        if (cachedData) {
+          const featured = JSON.parse(cachedData); // Convert string → array
+          const updated = featured.filter((p) => p._id !== product._id.toString()); // remove matching product
+          await redis.set("featured_products", JSON.stringify(updated)); // Save back
+          console.log("Deleted from featured_products in Redis");
+        }
+      } catch (redisError) {
+        console.error("Error handling Redis:", redisError);
+      }
+    }
+
     await Product.findByIdAndDelete(req.params.id);
 
     res.status(200).json({ message: "Product deleted successfully" });

@@ -1,5 +1,5 @@
 import { products } from "../../products";
-import CategoryItems from "./CategoryItems";
+import CategoryItems from "../components/CategoryItems";
 
 function HomePage() {
   return (

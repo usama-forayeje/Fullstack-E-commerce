@@ -1,10 +1,12 @@
+/* eslint-disable no-unused-vars */
 import { motion } from "framer-motion";
 import { BarChart, PlusCircle, ShoppingBasket } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Button } from "../components/ui/button";
 import CreateProductForm from "../components/CreateProductForm";
 import ProductsList from "../components/ProductsList";
 import AnalyticsTab from "../components/AnalyticsTab";
+import { useProductStore } from "../store/useProductStore";
 
 const tabs = [
   { id: "create", label: "Create Product", icon: PlusCircle },
@@ -13,6 +15,11 @@ const tabs = [
 ];
 function AdminPage() {
   const [activeTab, setActiveTab] = useState(tabs[0].id);
+  const { getAllProducts } = useProductStore();
+
+  useEffect(() => {
+    getAllProducts();
+  }, [getAllProducts]);
 
   return (
     <div className="min-h-screen  text-white relative overflow-hidden">
