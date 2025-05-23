@@ -1,22 +1,27 @@
 import cloudinary from "../../db/cloudinary.js";
 import redis from "../../db/redis.js";
 import Product from "../models/product.model.js";
+import { uploadToCloudinary } from "../services/cloudinaryUpload.js";
 
 export const crateProduct = async (req, res) => {
   try {
-    const { name, description, price, image, category } = req.body;
+    const { name, description, price, category } = req.body;
 
-    let cloudinaryResponse = null;
+    let imageUrl = "";
 
-    if (image) {
-      cloudinaryResponse = await cloudinary.uploader.upload(image, { folder: "products" });
+    if (req.file) {
+      const cloudRes = await uploadToCloudinary(req.file.buffer);
+      imageUrl = cloudRes.secure_url;
     }
 
+    if (!imageUrl) {
+      return res.status(400).json({ message: "Image upload failed or missing" });
+    }
     const product = await Product.create({
       name,
       description,
       price,
-      image: cloudinaryResponse?.secure_url ? cloudinaryResponse?.secure_url : "",
+      image: imageUrl,
       category,
     });
 

@@ -9,6 +9,7 @@ import { Label } from "@/components/ui/label";
 import FileUpload from "./ui/fileUpload";
 import { SelectScrollable } from "./ui/selectScrollable";
 import SubmitButton from "./form/SubmitButton";
+import { useProductStore } from "../store/useProductStore";
 import { PlusCircleIcon } from "lucide-react";
 
 const categories = [
@@ -39,16 +40,26 @@ function CreateProductForm() {
     resolver: zodResolver(createProductSchema),
   });
 
+  const { createProducts } = useProductStore();
+
   const onSubmit = async (data) => {
     try {
+      const formData = new FormData();
+      formData.append("name", data.name);
+      formData.append("description", data.description);
+      formData.append("price", data.price);
+      formData.append("category", data.category);
+      formData.append("productImage", data.productImage);
       console.log(data);
+      await createProducts(formData);
+      reset();
     } catch (error) {
       console.log("log in error", error);
     }
   };
 
   return (
-    <div className="flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="flex flex-col justify-center py-2 sm:px-6 lg:px-8">
       <motion.div
         className=" sm:mx-auto sm:w-full sm:max-w-md"
         initial={{ opacity: 0, y: 20 }}
@@ -74,11 +85,10 @@ function CreateProductForm() {
                 Description
               </Label>
               <Textarea
-                id="name"
-                label="Product Name"
-                placeholder="Inter your product name"
-                register={register}
-                error={errors.description}
+                id="description"
+                placeholder="Enter your product description"
+                {...register("description")}
+                className="..."
               />
             </div>
             <div>
@@ -97,7 +107,7 @@ function CreateProductForm() {
                 label="Category"
                 placeholder="Select a category"
                 groups={categories}
-                value={watch("category")}
+                value={watch("category") ?? ""}
                 onChange={(value) => setValue("category", value)}
                 className="w-full"
                 error={errors.category}

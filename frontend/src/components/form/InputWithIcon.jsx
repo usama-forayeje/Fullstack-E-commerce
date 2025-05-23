@@ -1,7 +1,7 @@
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 
-function InputWithIcon({ id, label, type = "text", icon: Icon, register, error, placeholder }) {
+function InputWithIcon({ id, label, type, icon: Icon, register, error, placeholder }) {
   return (
     <div className="space-y-1">
       <Label htmlFor={id} className="text-sm text-gray-300">
