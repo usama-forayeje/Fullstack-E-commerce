@@ -1,0 +1,72 @@
+import { create } from "zustand";
+import axios from "../lib/axios.config";
+import { toast } from "react-hot-toast";
+
+export const useCartStore = create((set, get) => ({
+  cart: [],
+  coupon: null,
+  isCouponApplied: false,
+  loading: false,
+  subTotal: 0,
+  total: 0,
+
+  getCartItems: async () => {
+    try {
+      const res = await axios.get("/cart");
+      console.log("Cart from API:", res.data);
+      set({ cart: res.data });
+      get().calculateTotal();
+    } catch (error) {
+      set({ cart: [] });
+      const message = error?.response?.data?.message || error?.message || "An error occurred";
+      toast.error(message);
+    }
+  },
+  clearCart: () => {
+    set({
+      cart: [],
+      coupon: null,
+      isCouponApplied: false,
+      subTotal: 0,
+      total: 0,
+    });
+    toast.success("Cart cleared successfully");
+  },
+
+  addToCart: async (product) => {
+    set({ loading: true });
+    try {
+      await axios.post("/cart", { productId: product._id });
+      toast.success("Product added to cart successfully!");
+
+      const { cart } = get();
+      const existingItem = cart.find((item) => item._id === product._id);
+      const updatedCart = existingItem
+        ? cart.map((item) =>
+            item._id === product._id ? { ...item, quantity: item.quantity + 1 } : item
+          )
+        : [...cart, { ...product, quantity: 1 }];
+
+      set({ cart: updatedCart, loading: false });
+      get().calculateTotal();
+    } catch (error) {
+      set({ loading: false });
+      const message = error?.response?.data?.message || error?.message || "Cart update failed";
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  calculateTotal: () => {
+    const { cart, coupon } = get();
+    const subTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    let total = subTotal;
+
+    if (coupon) {
+      const discount = subTotal * (coupon.discount / 100);
+      total = subTotal - discount;
+    }
+
+    set({ subTotal, total });
+  },
+}));
