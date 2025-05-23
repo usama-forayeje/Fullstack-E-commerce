@@ -43,7 +43,7 @@ function NavBer() {
 
             {admin && (
               <Link
-                to="/dashboard"
+                to="/secret-dashboard"
                 className="bg-emerald-700 hover:bg-emerald-600 text-white px-4 py-2 rounded-md font-medium transition duration-300 flex items-center"
               >
                 <LayoutDashboard size={18} className="mr-2" />
