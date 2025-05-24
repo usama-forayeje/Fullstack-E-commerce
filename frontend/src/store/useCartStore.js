@@ -57,6 +57,39 @@ export const useCartStore = create((set, get) => ({
     }
   },
 
+  removeFromCart: async (productId) => {
+    try {
+      await axios.delete(`/cart`, { data: { productId } });
+      set((prevState) => ({
+        cart: prevState.cart.filter((item) => item._id !== productId),
+      }));
+      get().calculateTotal();
+      toast.success("Product removed from cart successfully!");
+    } catch (error) {
+      const message = error?.response?.data?.message || error?.message || "Cart update failed";
+      toast.error(message);
+      throw error;
+    }
+  },
+
+  updateQuantity: async (productId, quantity) => {
+    try {
+      if (quantity === 0) {
+        get().removeFromCart(productId);
+        return;
+      }
+      await axios.put(`/cart/${productId}`, { quantity });
+      set((prevState) => ({
+        cart: prevState.cart.map((item) => (item._id === productId ? { ...item, quantity } : item)),
+      }));
+      get().calculateTotal();
+    } catch (error) {
+      const message = error?.response?.data?.message || error?.message || "Cart update failed";
+      toast.error(message);
+      throw error;
+    }
+  },
+
   calculateTotal: () => {
     const { cart, coupon } = get();
     const subTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);

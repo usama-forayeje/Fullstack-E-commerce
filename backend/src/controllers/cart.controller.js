@@ -11,8 +11,8 @@ export const getCartProducts = async (req, res) => {
 
     // attach quantity from cartItems
     const cartItems = products.map((product) => {
-      const item = req.user.cartItems.find((cartItem) =>
-        cartItem.product.toString() === product._id.toString()
+      const item = req.user.cartItems.find(
+        (cartItem) => cartItem.product.toString() === product._id.toString()
       );
       return {
         ...product.toJSON(),
@@ -26,7 +26,6 @@ export const getCartProducts = async (req, res) => {
     res.status(500).json({ message: "Server error", error: error.message });
   }
 };
-
 
 export const addToCart = async (req, res) => {
   try {
@@ -74,6 +73,13 @@ export const updateQuantity = async (req, res) => {
     const { id: productId } = req.params;
     const { quantity } = req.body;
     const user = req.user;
+
+    if (typeof quantity !== "number" || !Number.isInteger(quantity)) {
+      return res.status(400).json({
+        success: false,
+        error: "Invalid quantity value",
+      });
+    }
 
     const existingItem = user.cartItems.find((item) => item.product.equals(productId));
 

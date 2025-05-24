@@ -53,7 +53,6 @@ export const useUserStore = create((set) => ({
       set({ user: res.data, checkingAuth: false });
     } catch (error) {
       set({ checkingAuth: false, user: null });
-      toast.error(error.response?.data?.message || "Something went wrong");
       throw error;
     }
   },
