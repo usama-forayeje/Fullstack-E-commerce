@@ -10,6 +10,7 @@ import AdminPage from "./pages/AdminPage.jsx";
 import CategoryPage from "./pages/CategoryPage.jsx";
 import CartPage from "./pages/CartPage.jsx";
 import { useCartStore } from "./store/useCartStore.js";
+import PurchaseSuccessPage from "./pages/PurchaseSuccessPage.jsx";
 
 function App() {
   const user = useUserStore((state) => state.user);
@@ -51,6 +52,10 @@ function App() {
           />
           <Route path="/category/:category" element={<CategoryPage />} />
           <Route path="/cart" element={user ? <CartPage /> : <Navigate to="/log-in" />} />
+          <Route
+            path="/purchase-success"
+            element={<PurchaseSuccessPage />}
+          />
         </Routes>
       </div>
     </div>

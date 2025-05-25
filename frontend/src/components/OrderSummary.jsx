@@ -9,8 +9,6 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 function OrderSummary() {
   const { total, subTotal, coupon, isCouponApplied, cart } = useCartStore();
 
-
-
   const saving = subTotal - total;
   const formattedSubTotal = subTotal.toFixed(2);
   const formattedTotal = total.toFixed(2);
@@ -26,14 +24,13 @@ function OrderSummary() {
     const session = response.data;
 
     const result = await stripe.redirectToCheckout({
-      sessionId: session.id
-    })
-console.log("Checkout Session ID:", session.id);
+      sessionId: session.id,
+    });
+    console.log("Checkout Session ID:", session.id);
 
     if (result.error) {
       console.log(result.error.message);
     }
-
   };
 
   return (

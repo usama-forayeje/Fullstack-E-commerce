@@ -42,6 +42,7 @@ export const createCheckoutSession = async (req, res) => {
       line_items: lineItems,
       mode: "payment",
       success_url: `${process.env.CLIENT_URL}/purchase-success?session_id={CHECKOUT_SESSION_ID}`,
+
       cancel_url: `${process.env.CLIENT_URL}/purchase-cancel`,
       discounts: coupon
         ? [
@@ -94,13 +95,13 @@ export const checkoutSuccess = async (req, res) => {
       // create a new Order
       const products = JSON.parse(session.metadata.products);
       const newOrder = new Order({
-        user: session.metadata.userId,
+        userId: session.metadata.userId,
         products: products.map((product) => ({
           product: product.id,
           quantity: product.quantity,
           price: product.price,
         })),
-        totalAmount: session.amount_total / 100, // convert from cents to dollars,
+        totalPrice: session.amount_total / 100,
         stripeSessionId: sessionId,
       });
       console.log("Session Created:", session.id);
