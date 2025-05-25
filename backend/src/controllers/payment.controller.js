@@ -80,19 +80,27 @@ export const checkoutSuccess = async (req, res) => {
     const session = await stripe.checkout.sessions.retrieve(sessionId);
 
     if (session.payment_status === "paid") {
+      // ✅ check for existing order to prevent duplicates
+      const existingOrder = await Order.findOne({ stripeSessionId: sessionId });
+      if (existingOrder) {
+        return res.status(200).json({
+          success: true,
+          message: "Order already processed.",
+          orderId: existingOrder._id,
+        });
+      }
+
+      // ⛔ deactivating coupon if present
       if (session.metadata.couponCode) {
         await Coupon.findOneAndUpdate(
           {
             code: session.metadata.couponCode,
             userId: session.metadata.userId,
           },
-          {
-            isActive: false,
-          }
+          { isActive: false }
         );
       }
 
-      // create a new Order
       const products = JSON.parse(session.metadata.products);
       const newOrder = new Order({
         userId: session.metadata.userId,
@@ -104,42 +112,64 @@ export const checkoutSuccess = async (req, res) => {
         totalPrice: session.amount_total / 100,
         stripeSessionId: sessionId,
       });
-      console.log("Session Created:", session.id);
 
       await newOrder.save();
 
-      res.status(200).json({
+      return res.status(200).json({
         success: true,
-        message: "Payment successful, order created, and coupon deactivated if used.",
+        message: "Payment successful, order created.",
         orderId: newOrder._id,
       });
+    } else {
+      return res.status(400).json({ message: "Payment not completed." });
     }
   } catch (error) {
     console.error("Error processing successful checkout:", error);
-    res.status(500).json({ message: "Error processing successful checkout", error: error.message });
+    res.status(500).json({
+      message: "Error processing successful checkout",
+      error: error.message,
+    });
   }
 };
 
+
 async function createStripeCoupon(discountPercentage) {
+  const percent = Math.floor(discountPercentage);
+
   const coupon = await stripe.coupons.create({
-    percent_off: discountPercentage,
+    percent_off: percent,
     duration: "once",
   });
 
   return coupon.id;
 }
 
+async function generateUniqueCouponCode() {
+  const tryCode = () => "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase();
+
+  let code;
+  let exists = true;
+  while (exists) {
+    code = tryCode();
+    exists = await Coupon.findOne({ code });
+  }
+
+  return code;
+}
+
 async function createNewCoupon(userId) {
-  await Coupon.findOneAndDelete({ userId });
+  await Coupon.deleteMany({ userId }); 
+
+  const couponCode = await generateUniqueCouponCode();
 
   const newCoupon = new Coupon({
-    code: "GIFT" + Math.random().toString(36).substring(2, 8).toUpperCase(),
+    code: couponCode,
     discountPercentage: 10,
-    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), // 30 days from now
+    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 
     userId: userId,
+    isActive: true,
   });
 
   await newCoupon.save();
-
   return newCoupon;
 }

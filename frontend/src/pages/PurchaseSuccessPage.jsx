@@ -1,5 +1,6 @@
 import { ArrowRight, CheckCircle, HandHeart } from "lucide-react";
 import { Link } from "react-router";
+import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useCartStore } from "../store/useCartStore";
 import { useEffect, useState } from "react";
@@ -13,8 +14,10 @@ function PurchaseSuccessPage() {
     const { clearCart } = useCartStore();
 
     useEffect(() => {
-
+        let called = false;
         const handleCheckoutSuccess = async (sessionId) => {
+            if (called) return;
+            called = true;
             try {
                 await axios.post('/payments/checkout-success', {
                     sessionId
@@ -22,7 +25,7 @@ function PurchaseSuccessPage() {
                 clearCart();
             } catch (error) {
                 console.log(error);
-
+                setError('Something went wrong while confirming the order.');
             } finally {
                 setIsProcessing(false);
             }
