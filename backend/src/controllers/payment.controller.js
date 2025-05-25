@@ -103,6 +103,7 @@ export const checkoutSuccess = async (req, res) => {
         totalAmount: session.amount_total / 100, // convert from cents to dollars,
         stripeSessionId: sessionId,
       });
+      console.log("Session Created:", session.id);
 
       await newOrder.save();
 

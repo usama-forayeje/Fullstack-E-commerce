@@ -9,21 +9,32 @@ const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 function OrderSummary() {
   const { total, subTotal, coupon, isCouponApplied, cart } = useCartStore();
 
-  const handlePayment = async () => {
-    const stripe = await stripePromise;
-    const response = await axios.post("/payments/create-checkout-session", {
-      products: cart,
-      coupon: coupon ? coupon.code : null,
-    });
 
-    const session = response.data;
-    console.log("session", session);
-  };
 
   const saving = subTotal - total;
   const formattedSubTotal = subTotal.toFixed(2);
   const formattedTotal = total.toFixed(2);
   const formattedSaving = saving.toFixed(2);
+
+  const handlePayment = async () => {
+    const stripe = await stripePromise;
+    const response = await axios.post("/payments/create-checkout-session", {
+      products: cart,
+      couponCode: coupon ? coupon.code : null,
+    });
+
+    const session = response.data;
+
+    const result = await stripe.redirectToCheckout({
+      sessionId: session.id
+    })
+console.log("Checkout Session ID:", session.id);
+
+    if (result.error) {
+      console.log(result.error.message);
+    }
+
+  };
 
   return (
     <motion.div
