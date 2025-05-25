@@ -4,7 +4,7 @@ import { checkoutSuccess, createCheckoutSession } from "../controllers/payment.c
 
 const router = express.Router();
 
-router.post("/crate-checkout-session", protectRoute, createCheckoutSession);
+router.post("/create-checkout-session", protectRoute, createCheckoutSession);
 router.post("/checkout-success", protectRoute, checkoutSuccess);
 
 export default router;

@@ -2,8 +2,23 @@ import { motion } from "framer-motion";
 import { useCartStore } from "../store/useCartStore";
 import { Link } from "react-router";
 import { MoveRight } from "lucide-react";
+import { loadStripe } from "@stripe/stripe-js";
+import axios from "../lib/axios.config";
+
+const stripePromise = loadStripe(import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY);
 function OrderSummary() {
-  const { total, subTotal, coupon, isCouponApplied } = useCartStore();
+  const { total, subTotal, coupon, isCouponApplied, cart } = useCartStore();
+
+  const handlePayment = async () => {
+    const stripe = await stripePromise;
+    const response = await axios.post("/payments/create-checkout-session", {
+      products: cart,
+      coupon: coupon ? coupon.code : null,
+    });
+
+    const session = response.data;
+    console.log("session", session);
+  };
 
   const saving = subTotal - total;
   const formattedSubTotal = subTotal.toFixed(2);
@@ -47,14 +62,15 @@ function OrderSummary() {
           </dl>
         </div>
 
-        <motion.div
+        <motion.button
           className="flex w-full items-center cursor-pointer  justify-center rounded-lg bg-emerald-600 px-5 py-2.5 
           text-sm text-white font-medium hover:bg-emerald-700 focus:outline-none focus:ring-4 focus:ring-emerald-300"
           whileHover={{ scale: 1.05 }}
           whileTap={{ scale: 0.95 }}
+          onClick={handlePayment}
         >
           Proceed to Checkout
-        </motion.div>
+        </motion.button>
         <div className="flex items-center justify-center gap-2">
           <span className="text-sm font-normal text-gray-400">or</span>
           <Link
