@@ -8,6 +8,7 @@ import cartRoutes from "./src/routes/cart.routes.js";
 import couponRoutes from "./src/routes/coupon.routes.js";
 import paymentRoutes from "./src/routes/payment.routes.js";
 import analyticsRoutes from "./src/routes/analytics.routes.js";
+import path from "path";
 import { connectDB } from "./db/db.connect.js";
 
 dotenv.config();
@@ -18,12 +19,21 @@ app.use(express.json());
 app.use(cookieParser());
 app.use(cors({ origin: process.env.CLIENT_URL, credentials: true }));
 
+const __dirname = path.resolve();
+
 app.use("/api/v1/auth", authRoutes);
 app.use("/api/v1/products", productRoutes);
 app.use("/api/v1/cart", cartRoutes);
 app.use("/api/v1/coupons", couponRoutes);
 app.use("/api/v1/payments", paymentRoutes);
 app.use("/api/v1/analytics", analyticsRoutes);
+
+if (process.env.NODE_ENV === "production") {
+  app.use(express.static(path.join(__dirname, "/frontend/dist")));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
+  });
+}
 
 connectDB()
   .then(() => {
