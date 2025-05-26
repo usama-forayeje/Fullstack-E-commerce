@@ -18,9 +18,7 @@ function CategoryItems({ item }) {
 
           {/* Info Block */}
           <div className="absolute bottom-4 left-4 z-20 text-white space-y-1">
-            <h2 className="text-2xl sm:text-3xl font-bold leading-tight">{item?.name}</h2>
-            <p className="text-sm sm:text-base text-gray-300 capitalize">{item?.category}</p>
-            <p className="text-emerald-400 text-lg font-semibold">${item?.price}</p>
+            <h2 className="text-2xl sm:text-3xl font-bold leading-tight">{item?.category}</h2>
           </div>
         </div>
       </Link>

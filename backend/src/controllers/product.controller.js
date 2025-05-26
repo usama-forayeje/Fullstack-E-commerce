@@ -58,7 +58,7 @@ export const getFeaturedProducts = async (req, res) => {
 
     await redis.set("featured_products", JSON.stringify(featuredProducts));
 
-    res.status(200).json({ featuredProducts });
+    res.status(200).json({ products: featuredProducts });
   } catch (error) {
     console.log("product get all error", error);
     res.status(500).json({ message: "Internal server error" });
@@ -104,10 +104,6 @@ export const toggleFeatured = async (req, res) => {
   try {
     const product = await Product.findById(req.params.id);
 
-    if (!product) {
-      return res.status(404).json({ message: "Product not found" });
-    }
-
     if (product) {
       product.isFeatured = !product.isFeatured;
       const updatedProduct = await product.save();
@@ -145,7 +141,8 @@ export const deleteProduct = async (req, res) => {
         const cachedData = await redis.get("featured_products");
         if (cachedData) {
           const featured = JSON.parse(cachedData); // Convert string → array
-          const updated = featured.filter((p) => p._id !== product._id.toString()); // remove matching product
+          const updated = featured.filter((p) => p._id !== product._id.toString());
+
           await redis.set("featured_products", JSON.stringify(updated)); // Save back
           console.log("Deleted from featured_products in Redis");
         }

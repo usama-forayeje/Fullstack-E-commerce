@@ -29,7 +29,6 @@ function AnalyticsTab() {
     const fetchAnalyticsData = async () => {
       try {
         const response = await axios.get("/analytics");
-        console.log("Daily Data:", response.data.last7Days);
 
         setAnalyticsData(response.data.summary);
         setDailySalesData(response.data.last7Days);

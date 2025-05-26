@@ -4,9 +4,11 @@ import { toast } from "react-hot-toast";
 
 export const useProductStore = create((set) => ({
   products: [],
+  featuredProducts: [],
   loading: false,
 
   setProducts: (products) => set({ products }),
+  setFeaturedProducts: (featuredProducts) => set({ featuredProducts }),
 
   createProducts: async (formData) => {
     set({ loading: true });
@@ -44,7 +46,7 @@ export const useProductStore = create((set) => ({
     set({ loading: true });
     try {
       const response = await axios.get(`/products/category/${category}`);
-      set({ products: response.data.products, loading: false });
+      set({ featuredProducts: response.data.products, loading: false });
     } catch (error) {
       set({ error: "Failed to fetch products", loading: false });
       toast.error(error.response.data.error || "Failed to fetch products");
@@ -93,7 +95,7 @@ export const useProductStore = create((set) => ({
     set({ loading: true });
     try {
       const res = await axios.get("/products/featured");
-      set({ products: res.data.products, loading: false });
+      set({ featuredProducts: res.data.products, loading: false });
     } catch (error) {
       set({ loading: false });
       toast.error(error.response?.data?.message || "Something went wrong");
