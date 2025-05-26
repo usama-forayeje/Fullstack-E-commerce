@@ -132,7 +132,6 @@ export const checkoutSuccess = async (req, res) => {
   }
 };
 
-
 async function createStripeCoupon(discountPercentage) {
   const percent = Math.floor(discountPercentage);
 
@@ -158,14 +157,14 @@ async function generateUniqueCouponCode() {
 }
 
 async function createNewCoupon(userId) {
-  await Coupon.deleteMany({ userId }); 
+  await Coupon.findOneAndDelete({ userId });
 
   const couponCode = await generateUniqueCouponCode();
 
   const newCoupon = new Coupon({
     code: couponCode,
     discountPercentage: 10,
-    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000), 
+    expirationDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
     userId: userId,
     isActive: true,
   });

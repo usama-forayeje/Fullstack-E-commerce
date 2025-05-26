@@ -3,7 +3,9 @@ import { Link } from "react-router";
 import { motion } from "framer-motion";
 import { Button } from "../components/ui/button";
 import { useCartStore } from "../store/useCartStore";
+
 import { useEffect, useState } from "react";
+import Confetti from "react-confetti";
 import axios from "../lib/axios.config";
 
 
@@ -42,7 +44,7 @@ function PurchaseSuccessPage() {
     if (isProcessing) {
         return (
             <div className="h-screen flex items-center justify-center">
-                <div className="max-w-md w-full bg-gray-800 rounded-lg shadow-xl overflow-hidden relative z-10">
+                <div className="max-w-md w-full  rounded-lg shadow-xl overflow-hidden relative z-10">
                     <div className="p-6 sm:p-8">
                         <HandHeart className="h-16 w-16 text-emerald-400 mb-4" />
                     </div>
@@ -84,6 +86,14 @@ function PurchaseSuccessPage() {
                 transition={{ duration: 0.6, ease: "easeOut" }}
                 className="relative backdrop-blur-md border border-emerald-500/20 bg-gray-800/70 shadow-2xl rounded-2xl w-full max-w-md p-6 sm:p-8"
             >
+                <Confetti
+                    width={window.innerWidth}
+                    height={window.innerHeight}
+                    gravity={0.1}
+                    style={{ zIndex: 99 }}
+                    numberOfPieces={700}
+                    recycle={false}
+                />
                 <div className="flex justify-center">
                     <CheckCircle className="h-16 w-16 text-emerald-400 drop-shadow-lg animate-pulse" />
                 </div>

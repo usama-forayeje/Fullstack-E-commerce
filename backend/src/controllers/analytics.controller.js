@@ -30,7 +30,7 @@ const getAnalyticsAggregations = async () => {
       $group: {
         _id: null,
         totalSales: { $sum: 1 },
-        totalRevenue: { $sum: "$totalAmount" },
+        totalRevenue: { $sum: "$totalPrice" },
       },
     },
   ]);
@@ -50,7 +50,7 @@ const getDailySalesData = async (startDate, endDate) => {
       $group: {
         _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt", timezone: "Asia/Dhaka" } },
         sales: { $sum: 1 },
-        revenue: { $sum: "$totalAmount" },
+        revenue: { $sum: "$totalPrice" },
       },
     },
     {
@@ -81,7 +81,7 @@ function getDatesInRange(startDate, endDate) {
     const month = String(currentDate.getMonth() + 1).padStart(2, "0");
     const year = currentDate.getFullYear();
 
-    dates.push(`${day}-${month}-${year}`);
+    dates.push(`${year}-${month}-${day}`);
     currentDate.setDate(currentDate.getDate() + 1);
   }
 

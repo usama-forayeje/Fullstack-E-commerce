@@ -18,11 +18,12 @@ export const useCartStore = create((set, get) => ({
       console.error("Error fetching coupon:", error);
     }
   },
+
   applyCoupon: async (code) => {
     try {
       const response = await axios.post("/coupons/validate", { code });
       set({ coupon: response.data, isCouponApplied: true });
-      get().calculateTotals();
+      get().calculateTotal();
       toast.success("Coupon applied successfully");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to apply coupon");
@@ -31,14 +32,13 @@ export const useCartStore = create((set, get) => ({
 
   removeCoupon: () => {
     set({ coupon: null, isCouponApplied: false });
-    get().calculateTotals();
+    get().calculateTotal();
     toast.success("Coupon removed");
   },
 
   getCartItems: async () => {
     try {
       const res = await axios.get("/cart");
-      console.log("Cart from API:", res.data);
       set({ cart: res.data });
       get().calculateTotal();
     } catch (error) {
@@ -47,14 +47,9 @@ export const useCartStore = create((set, get) => ({
       toast.error(message);
     }
   },
-  clearCart: async () => {
-    try {
-      await axios.delete("/cart");
-      set({ cart: [], coupon: null, total: 0, subtotal: 0 });
-    } catch (error) {
-      const message = error?.response?.data?.message || error?.message || "An error occurred";
-      toast.error(message);
-    }
+
+  clearCart: () => {
+    set({ cart: [], coupon: null, isCouponApplied: false, total: 0, subTotal: 0 });
   },
 
   addToCart: async (product) => {
@@ -77,7 +72,6 @@ export const useCartStore = create((set, get) => ({
       set({ loading: false });
       const message = error?.response?.data?.message || error?.message || "Cart update failed";
       toast.error(message);
-      throw error;
     }
   },
 
@@ -92,7 +86,6 @@ export const useCartStore = create((set, get) => ({
     } catch (error) {
       const message = error?.response?.data?.message || error?.message || "Cart update failed";
       toast.error(message);
-      throw error;
     }
   },
 
@@ -110,20 +103,29 @@ export const useCartStore = create((set, get) => ({
     } catch (error) {
       const message = error?.response?.data?.message || error?.message || "Cart update failed";
       toast.error(message);
-      throw error;
     }
   },
 
   calculateTotal: () => {
     const { cart, coupon } = get();
-    const subTotal = cart.reduce((total, item) => total + item.price * item.quantity, 0);
+    const subTotal = cart.reduce((total, item) => {
+      const price = parseFloat(item.price) || 0;
+      const quantity = parseInt(item.quantity) || 0;
+      return total + price * quantity;
+    }, 0);
+
     let total = subTotal;
 
-    if (coupon) {
-      const discount = subTotal * (coupon.discount / 100);
+    if (coupon && typeof coupon.discountPercentage === "number") {
+      const discount = subTotal * (coupon.discountPercentage / 100);
       total = subTotal - discount;
     }
 
-    set({ subTotal, total });
+    set({
+      subTotal: parseFloat(subTotal.toFixed(2)),
+      total: parseFloat(total.toFixed(2)),
+    });
   },
 }));
+
+export default useCartStore;
