@@ -53,14 +53,8 @@ function App() {
           />
           <Route path="/category/:category" element={<CategoryPage />} />
           <Route path="/cart" element={user ? <CartPage /> : <Navigate to="/log-in" />} />
-          <Route
-            path="/purchase-success"
-            element={<PurchaseSuccessPage />}
-          />
-          <Route
-            path="/purchase-cancel"
-            element={<PurchaseCancelPage />}
-          />
+          <Route path="/purchase-success" element={<PurchaseSuccessPage />} />
+          <Route path="/purchase-cancel" element={<PurchaseCancelPage />} />
         </Routes>
       </div>
     </div>

@@ -1,7 +1,15 @@
-import { products } from "../../products";
+import { useEffect } from "react";
 import CategoryItems from "../components/CategoryItems";
+import { useProductStore } from "../store/useProductStore";
+import FeaturedProducts from "../components/FeaturedProducts";
 
 function HomePage() {
+  const { fetchFeaturedProducts, products, isLoading } = useProductStore();
+
+  useEffect(() => {
+    fetchFeaturedProducts();
+  }, [fetchFeaturedProducts]);
+
   return (
     <div className="relative min-h-screen text-white overflow-hidden">
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
@@ -12,10 +20,11 @@ function HomePage() {
           Discover a world of products and services.
         </p>
         <div className="grid grid-cols-1 sm:grid-cols-2  lg:grid-cols-3 gap-4">
-          {products.map((category) => (
-            <CategoryItems key={category.id} category={category} />
+          {products.map((item) => (
+            <CategoryItems key={item._id} item={item} />
           ))}
         </div>
+        {!isLoading && products.length > 0 && <FeaturedProducts featuredProducts={products} />}
       </div>
     </div>
   );

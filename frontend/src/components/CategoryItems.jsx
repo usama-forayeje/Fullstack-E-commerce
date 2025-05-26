@@ -1,19 +1,26 @@
 import { Link } from "react-router";
 
-function CategoryItems({ category }) {
+function CategoryItems({ item }) {
   return (
-    <div className="relative overflow-hidden h-96 w-full rounded-lg group">
-      <Link to={`/category/${category.category}`}>
-        <div className="w-full h-full cursor-pointer relative">
+    <div className="relative group rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow duration-300 bg-gray-900">
+      <Link to={`/category/${item.category}`}>
+        <div className="w-full h-80 sm:h-96 relative">
+          {/* Product Image */}
           <img
-            src={category?.image_url}
-            alt={category?.title}
+            src={item?.image || "https://via.placeholder.com/300"}
+            alt={item?.name || "Product Image"}
             className="object-cover w-full h-full transition-transform duration-500 ease-in-out transform group-hover:scale-110"
             loading="lazy"
           />
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-gray-900 opacity-50 z-10" />
-          <div className="absolute bottom-4 left-4 z-20">
-            <h2 className="text-white text-xl font-semibold">{category?.title}</h2>
+
+          {/* Gradient Overlay */}
+          <div className="absolute inset-0 bg-gradient-to-t from-black via-black/40 to-transparent z-10" />
+
+          {/* Info Block */}
+          <div className="absolute bottom-4 left-4 z-20 text-white space-y-1">
+            <h2 className="text-2xl sm:text-3xl font-bold leading-tight">{item?.name}</h2>
+            <p className="text-sm sm:text-base text-gray-300 capitalize">{item?.category}</p>
+            <p className="text-emerald-400 text-lg font-semibold">${item?.price}</p>
           </div>
         </div>
       </Link>

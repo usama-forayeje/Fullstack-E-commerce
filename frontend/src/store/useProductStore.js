@@ -88,4 +88,16 @@ export const useProductStore = create((set) => ({
       throw error;
     }
   },
+
+  fetchFeaturedProducts: async () => {
+    set({ loading: true });
+    try {
+      const res = await axios.get("/products/featured");
+      set({ products: res.data.products, loading: false });
+    } catch (error) {
+      set({ loading: false });
+      toast.error(error.response?.data?.message || "Something went wrong");
+      throw error;
+    }
+  },
 }));
