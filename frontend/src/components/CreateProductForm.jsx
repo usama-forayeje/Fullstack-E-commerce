@@ -23,8 +23,8 @@ const categories = [
       { label: "Jacket", value: "jacket" },
       { label: "Watch", value: "watch" },
       { label: "Bag", value: "bag" },
-      { label: "Home & Garden", value: "Home & Garden" },
-      { label: "Soft Drinks", value: "Soft Drinks" },
+      { label: "Home & Garden", value: "Home&Garden" },
+      { label: "Soft Drinks", value: "SoftDrinks" },
     ],
   },
 ];
